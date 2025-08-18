@@ -1,27 +1,495 @@
-<form>
-  <label for="type">Choose Coffee:</label>
-  <select id="type" name="type" required>
-    <option value="caramel">Caramel Coffee (₹60)</option>
-    <option value="chocolate">Chocolate Coffee (₹60)</option>
-    <option value="latte">Caffe Latte (₹40)</option>
-    <option value="americano">Americano (₹30)</option>
-  </select>
-  <br><br>
-  <label for="quantity">Quantity:</label>
-  <input type="number" id="quantity" name="quantity" min="1" value="1" required>
-  <br><br>
-  <label for="temp">Preferred Temperature:</label>
-  <select id="temp" name="temp" required>
-    <option value="room">Room Temperature</option>
-    <option value="hot">Hot</option>
-    <option value="cold">Cold</option>
-  </select>
-  <br><br>
-  <label for="name">Your Name:</label>
-  <input type="text" id="name" name="name" required>
-  <br><br>
-  <label for="contact">Your Contact (AIMT Roll No./Phone):</label>
-  <input type="text" id="contact" name="contact" required>
-  <br><br>
-  <button type="submit">Place Order</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kāphī - Coffee Orders</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #333;
+      --secondary-color: #f5f0e7;
+      --hover-color: #555;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--secondary-color);
+      color: var(--primary-color);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .logo-container {
+        margin-bottom: 40px;
+        text-align: center;
+    }
+
+    .logo-container img {
+        max-width: 210px;
+        height: auto;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .menu-card {
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 280px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .menu-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .menu-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: contain;
+      border-bottom: 1px solid #eee;
+    }
+
+    .menu-card-content {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .menu-card h2 {
+      margin: 0 0 5px 0;
+      font-size: 1.5em;
+      color: var(--primary-color);
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .menu-card p {
+      margin: 0 0 15px 0;
+      font-size: 0.9em;
+      color: #666;
+    }
+
+    .price-and-add {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      margin-bottom: 10px; /* Space between price/add and selector */
+    }
+    
+    .price-tag {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .add-btn {
+      background-color: var(--primary-color);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 15px; /* Adjusted padding to make it smaller */
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s;
+      font-size: 0.9em;
+    }
+
+    .add-btn:hover {
+      background-color: var(--hover-color);
+    }
+    
+    .temp-select {
+        width: 100%;
+        padding: 8px; /* Adjusted padding to make it smaller */
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        font-size: 0.9em;
+    }
+
+    .order-summary-form {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      margin-top: 30px;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .order-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .item-details {
+      flex-grow: 1;
+    }
+
+    .item-details h4 {
+      margin: 0;
+      font-size: 1.1em;
+    }
+
+    .item-details p {
+      margin: 0;
+      color: #888;
+    }
+
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .quantity-control button {
+      background-color: #eee;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 25px;
+      height: 25px;
+      cursor: pointer;
+    }
+
+    .quantity-control button:hover {
+      background-color: #ddd;
+    }
+
+    .total-container {
+      margin-top: 20px;
+      padding-top: 10px;
+      border-top: 2px solid #ddd;
+    }
+
+    .subtotal-price, .cold-charge, .total-price {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .total-price {
+      font-size: 1.5em;
+      color: var(--primary-color);
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 15px;
+      display: block;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-size: 1em;
+    }
+
+    button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 15px;
+      cursor: pointer;
+      margin-top: 20px;
+      border-radius: 8px;
+      font-size: 1.1em;
+      font-weight: bold;
+      width: 100%;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--hover-color);
+    }
+    
+    .hidden {
+        display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo-container">
+    <img src="kaphi_logo.png" alt="Kāphī Logo">
+  </div>
+
+  <div class="container">
+    <div class="menu-card" data-id="caramel" data-price="60">
+      <img src="https://simplyhomecooked.com/wp-content/uploads/2021/04/iced-caramel-macchiato-new-3.jpg" alt="Caramel Coffee">
+      <div class="menu-card-content">
+        <h2>Caramel Coffee</h2>
+        <p>A delightful blend of sweet caramel, espresso, and creamy milk.</p>
+        <div class="price-and-add">
+          <span class="price-tag">₹60</span>
+          <button class="add-btn">Add</button>
+        </div>
+        <select class="temp-select">
+          <option value="Room temp.">Room temp.</option>
+          <option value="cold">Cold (+₹10)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="menu-card" data-id="chocolate" data-price="60">
+      <img src="https://www.nestleprofessional.in/sites/default/files/2021-08/Iced-Chocolate.jpg" alt="Chocolate Coffee">
+      <div class="menu-card-content">
+        <h2>Chocolate Coffee</h2>
+        <p>Rich chocolate and robust coffee come together for a classic treat.</p>
+        <div class="price-and-add">
+          <span class="price-tag">₹60</span>
+          <button class="add-btn">Add</button>
+        </div>
+        <select class="temp-select">
+          <option value="Room temp.">Room temp.</option>
+          <option value="cold">Cold (+₹10)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="menu-card" data-id="latte" data-price="40">
+      <img src="https://media.istockphoto.com/id/1028658748/photo/caffe-latte-layered.jpg?s=612x612&w=0&k=20&c=_XW6ovSfKYi1HNlLYxEDIWjUZhUuDfJaQozxZ9AKSto=" alt="Caffe Latte">
+      <div class="menu-card-content">
+        <h2>Caffe Latte</h2>
+        <p>Espresso with steamed milk and a light layer of foam. Simple and elegant.</p>
+        <div class="price-and-add">
+          <span class="price-tag">₹40</span>
+          <button class="add-btn">Add</button>
+        </div>
+        <select class="temp-select">
+          <option value="Room temp.">Room temp.</option>
+          <option value="cold">Cold (+₹10)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="menu-card" data-id="americano" data-price="30">
+      <img src="https://littlebitrecipes.com/wp-content/uploads/2023/07/iced-americano-sq.jpg" alt="Americano">
+      <div class="menu-card-content">
+        <h2>Americano</h2>
+        <p>A shot of espresso diluted with hot water. Bold and straightforward.</p>
+        <div class="price-and-add">
+          <span class="price-tag">₹30</span>
+          <button class="add-btn">Add</button>
+        </div>
+        <select class="temp-select">
+          <option value="Room temp.">Room temp.</option>
+          <option value="cold">Cold (+₹10)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <form id="coffeeForm" class="order-summary-form hidden">
+    <h2>Your Order</h2>
+    <div id="orderList"></div>
+    
+    <div class="total-container">
+      <div class="subtotal-price">
+        <span>Subtotal</span>
+        <span id="subtotalPrice"></span>
+      </div>
+      <div class="cold-charge-total hidden">
+        <span>Cold Coffee Charge</span>
+        <span id="coldCharge"></span>
+      </div>
+      <div class="total-price">
+        <span>Total</span>
+        <span id="totalPrice"></span>
+      </div>
+    </div>
+    
+    <label for="name">Your Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="batch">Batch:</label>
+    <input type="text" id="batch" name="batch" required>
+
+    <label for="room">Room Number:</label>
+    <input type="text" id="room" name="room" required>
+
+    <button type="submit">Place Order</button>
+  </form>
+
+  <script>
+    const menuItems = {
+      caramel: {
+        name: "Caramel Coffee",
+        price: 60,
+        image: "https://simplyhomecooked.com/wp-content/uploads/2021/04/iced-caramel-macchiato-new-3.jpg"
+      },
+      chocolate: {
+        name: "Chocolate Coffee",
+        price: 60,
+        image: "https://www.nestleprofessional.in/sites/default/files/2021-08/Iced-Chocolate.jpg"
+      },
+      latte: {
+        name: "Caffe Latte",
+        price: 40,
+        image: "https://media.istockphoto.com/id/1028658748/photo/caffe-latte-layered.jpg?s=612x612&w=0&k=20&c=_XW6ovSfKYi1HNlLYxEDIWjUZhUuDfJaQozxZ9AKSto="
+      },
+      americano: {
+        name: "Americano",
+        price: 30,
+        image: "https://littlebitrecipes.com/wp-content/uploads/2023/07/iced-americano-sq.jpg"
+      }
+    };
+
+    let orderItems = {};
+
+    const orderListDiv = document.getElementById("orderList");
+    const subtotalPriceDiv = document.getElementById("subtotalPrice");
+    const coldChargeContainer = document.querySelector(".cold-charge-total");
+    const coldChargeDiv = document.getElementById("coldCharge");
+    const totalPriceDiv = document.getElementById("totalPrice");
+    const orderForm = document.getElementById("coffeeForm");
+
+    document.querySelectorAll(".add-btn").forEach(button => {
+      button.addEventListener("click", function() {
+        const card = this.closest(".menu-card");
+        const id = card.dataset.id;
+        const temp = card.querySelector(".temp-select").value;
+        const orderKey = `${id}-${temp}`;
+        
+        if (orderItems.hasOwnProperty(orderKey)) {
+          orderItems[orderKey].qty++;
+        } else {
+          orderItems[orderKey] = { ...menuItems[id], temp: temp, qty: 1 };
+        }
+        
+        renderOrder();
+        orderForm.classList.remove("hidden");
+      });
+    });
+
+    orderListDiv.addEventListener("click", function(e) {
+      if (e.target.tagName === "BUTTON") {
+        const orderKey = e.target.dataset.id;
+        const action = e.target.dataset.action;
+
+        if (action === "increase") {
+          orderItems[orderKey].qty++;
+        } else if (action === "decrease") {
+          orderItems[orderKey].qty--;
+          if (orderItems[orderKey].qty <= 0) {
+            delete orderItems[orderKey];
+          }
+        }
+        renderOrder();
+      }
+    });
+
+    function renderOrder() {
+      orderListDiv.innerHTML = "";
+      let subtotal = 0;
+      let coldCharge = 0;
+
+      for (const key in orderItems) {
+        const item = orderItems[key];
+        const itemSubtotal = item.qty * item.price;
+        subtotal += itemSubtotal;
+        
+        if (item.temp === 'cold') {
+          coldCharge += 10 * item.qty;
+        }
+
+        const itemDiv = document.createElement("div");
+        itemDiv.classList.add("order-list-item");
+        itemDiv.innerHTML = `
+          <div class="item-details">
+            <h4>${item.name}</h4>
+            <p>
+                ₹${item.price} x ${item.qty} (${item.temp === 'hot' ? 'Hot' : 'Cold'})
+            </p>
+          </div>
+          <div class="quantity-control">
+            <button data-id="${key}" data-action="decrease">-</button>
+            <span>${item.qty}</span>
+            <button data-id="${key}" data-action="increase">+</button>
+          </div>
+        `;
+        orderListDiv.appendChild(itemDiv);
+      }
+      
+      subtotalPriceDiv.textContent = `₹${subtotal}`;
+      
+      if (coldCharge > 0) {
+        coldChargeContainer.classList.remove("hidden");
+        coldChargeDiv.textContent = `+₹${coldCharge}`;
+      } else {
+        coldChargeContainer.classList.add("hidden");
+      }
+      
+      const total = subtotal + coldCharge;
+      totalPriceDiv.textContent = `₹${total}`;
+
+      if (Object.keys(orderItems).length === 0) {
+        orderForm.classList.add("hidden");
+      }
+    }
+    
+    document.getElementById("coffeeForm").onsubmit = function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const batch = document.getElementById("batch").value;
+      const room = document.getElementById("room").value;
+
+      let csvContent = "data:text/csv;charset=utf-8,Name,Batch,Room,Coffee,Quantity,Temperature,Total Price\n";
+      let totalOrderPrice = 0;
+
+      for (const key in orderItems) {
+        const item = orderItems[key];
+        const itemTotal = (item.qty * item.price) + (item.temp === 'cold' ? item.qty * 10 : 0);
+        totalOrderPrice += itemTotal;
+        csvContent += `${name},${batch},${room},"${item.name}",${item.qty},${item.temp},${itemTotal}\n`;
+      }
+      
+      // Add a final row for the grand total
+      csvContent += `,,,Final Order Total,,,,₹${totalOrderPrice}\n`;
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "coffee_order.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      alert("Order placed! Please come to Room No. 108 to pick up your coffee.");
+      document.getElementById("coffeeForm").reset();
+      orderItems = {};
+      renderOrder();
+    }
+  </script>
+</body>
+</html>
