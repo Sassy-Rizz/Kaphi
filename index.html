@@ -464,32 +464,50 @@
       const batch = document.getElementById("batch").value;
       const room = document.getElementById("room").value;
 
-      let csvContent = "data:text/csv;charset=utf-8,Name,Batch,Room,Coffee,Quantity,Temperature,Total Price\n";
-      let totalOrderPrice = 0;
+      // Prepare the data to be sent to the server
+      const orderPayload = {
+        name: name,
+        batch: batch,
+        room: room,
+        items: Object.values(orderItems).map(item => ({
+          name: item.name,
+          qty: item.qty,
+          price: item.price,
+          temp: item.temp
+        }))
+      };
 
-      for (const key in orderItems) {
-        const item = orderItems[key];
-        const itemTotal = (item.qty * item.price) + (item.temp === 'cold' ? item.qty * 10 : 0);
-        totalOrderPrice += itemTotal;
-        csvContent += `${name},${batch},${room},"${item.name}",${item.qty},${item.temp},${itemTotal}\n`;
-      }
-      
-      // Add a final row for the grand total
-      csvContent += `,,,Final Order Total,,,,₹${totalOrderPrice}\n`;
+      // --- IMPORTANT: Replace with the actual URL of your deployed server ---
+      // For local testing, keep it as 'http://localhost:3000/submit-order'
+      // Once deployed, it will be something like 'https://your-app-name.herokuapp.com/submit-order'
+      const serverUrl = 'http://localhost:3000/submit-order'; 
 
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "coffee_order.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      alert("Order placed! Please come to Room No. 108 to pick up your coffee.");
-      document.getElementById("coffeeForm").reset();
-      orderItems = {};
-      renderOrder();
+      fetch(serverUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderPayload),
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        alert("Order placed! Please come to Room No. 108 to pick up your coffee.");
+        document.getElementById("coffeeForm").reset();
+        orderItems = {};
+        renderOrder();
+      })
+      .catch((error) => {
+        console.error('Error submitting order:', error);
+        alert("There was an issue placing your order. Please try again.");
+      });
     }
   </script>
 </body>
 </html>
+```
+<br/>
