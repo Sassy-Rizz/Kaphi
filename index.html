@@ -1,0 +1,27 @@
+<form>
+  <label for="type">Choose Coffee:</label>
+  <select id="type" name="type" required>
+    <option value="caramel">Caramel Coffee (₹60)</option>
+    <option value="chocolate">Chocolate Coffee (₹60)</option>
+    <option value="latte">Caffe Latte (₹40)</option>
+    <option value="americano">Americano (₹30)</option>
+  </select>
+  <br><br>
+  <label for="quantity">Quantity:</label>
+  <input type="number" id="quantity" name="quantity" min="1" value="1" required>
+  <br><br>
+  <label for="temp">Preferred Temperature:</label>
+  <select id="temp" name="temp" required>
+    <option value="room">Room Temperature</option>
+    <option value="hot">Hot</option>
+    <option value="cold">Cold</option>
+  </select>
+  <br><br>
+  <label for="name">Your Name:</label>
+  <input type="text" id="name" name="name" required>
+  <br><br>
+  <label for="contact">Your Contact (AIMT Roll No./Phone):</label>
+  <input type="text" id="contact" name="contact" required>
+  <br><br>
+  <button type="submit">Place Order</button>
+</form>
